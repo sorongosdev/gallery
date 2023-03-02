@@ -39,9 +39,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**uri를 통해서 이미지를 보여줄 수 있다.*/
-    private fun updateImages(uriList: List<Uri>){
-        Log.i("updateImages","$uriList")
+    private fun updateImages(uriList: List<Uri>) {
+        Log.i("updateImages", "$uriList")
     }
+
+    /**권한을 물어보고, 버튼을 다시 눌러야하는 수고 없이 allow 누르면 바로 실행*/
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when(requestCode){
+            REQUEST_READ_EXTERNAL_STORAGE -> { // 코드가 일치하고, 권한 허용이 되었다면 바로 실행
+                if(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED){
+                    loadImage()
+                }
+            }
+        }
+    }
+
     private fun checkPermission() {
         when {
             ContextCompat.checkSelfPermission(
