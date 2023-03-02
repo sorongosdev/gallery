@@ -53,7 +53,9 @@ class MainActivity : AppCompatActivity() {
 
         when(requestCode){
             REQUEST_READ_EXTERNAL_STORAGE -> { // 코드가 일치하고, 권한 허용이 되었다면 바로 실행
-                if(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED){
+                // ?: 연산자 - null일 때 오른쪽에 있는 걸로 디폴트값을 정해줌
+                val resultCode = grantResults.firstOrNull() ?: PackageManager.PERMISSION_GRANTED
+                if(resultCode == PackageManager.PERMISSION_GRANTED){
                     loadImage()
                 }
             }
