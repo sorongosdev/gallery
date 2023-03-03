@@ -17,20 +17,21 @@ import com.sorongos.gallery.databinding.ItemLoadMoreBinding
  * 리사이클러뷰와 어댑터의 차이
  * 변경에 대한 처리
  * */
-class ImageAdapter : ListAdapter<ImageItems, RecyclerView.ViewHolder>(
-    /**listadapter에 들어가야함
-     * 데이터가 바뀌었을 때 알아서 콜함
-     */
-    object : DiffUtil.ItemCallback<ImageItems>() {
-        override fun areItemsTheSame(oldItem: ImageItems, newItem: ImageItems): Boolean {
-            return oldItem === newItem // 같은 객체를 참조하는가?
-        }
+class ImageAdapter(private val itemClcikListener: ItemClickListener) :
+    ListAdapter<ImageItems, RecyclerView.ViewHolder>(
+        /**listadapter에 들어가야함
+         * 데이터가 바뀌었을 때 알아서 콜함
+         */
+        object : DiffUtil.ItemCallback<ImageItems>() {
+            override fun areItemsTheSame(oldItem: ImageItems, newItem: ImageItems): Boolean {
+                return oldItem === newItem // 같은 객체를 참조하는가?
+            }
 
-        override fun areContentsTheSame(oldItem: ImageItems, newItem: ImageItems): Boolean {
-            return oldItem == newItem // 같은 값인가?
+            override fun areContentsTheSame(oldItem: ImageItems, newItem: ImageItems): Boolean {
+                return oldItem == newItem // 같은 값인가?
+            }
         }
-    }
-) {
+    ) {
 
     override fun getItemCount(): Int {
         val originSize = currentList.size
@@ -44,7 +45,8 @@ class ImageAdapter : ListAdapter<ImageItems, RecyclerView.ViewHolder>(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var inflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        var inflater =
+            parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         return when (viewType) {
             ITEM_IMAGE -> {
                 val binding = ItemImageBinding.inflate(inflater, parent, false)
@@ -52,13 +54,25 @@ class ImageAdapter : ListAdapter<ImageItems, RecyclerView.ViewHolder>(
             }
             else -> { //ITEM_LOAD_MORE
                 val binding = ItemLoadMoreBinding.inflate(inflater, parent, false)
-                ItemMoreViewHolder(binding)
+                LoadMoreViewHolder(binding)
             }
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        when (holder) {
+            //sealed class 이기 때문에
+            is ImageViewHolder -> {
+                holder.bind(currentList[position] as ImageItems.Image)
+            }
+            is LoadMoreViewHolder -> {
+                holder.bind(itemClcikListener)
+            }
+        }
+    }
+
+    interface ItemClickListener {
+        fun onLoadMoreClick()
     }
 
     companion object {
@@ -83,8 +97,10 @@ class ImageViewHolder(private val binding: ItemImageBinding) :
         binding.previewImageView.setImageURI(item.uri)
     }
 }
-class ItemMoreViewHolder(private val binding: ItemLoadMoreBinding) : RecyclerView.ViewHolder(binding.root){
-    fun bind(){
 
+class LoadMoreViewHolder(binding: ItemLoadMoreBinding) :
+    RecyclerView.ViewHolder(binding.root) {
+    fun bind(itemClickListener: ImageAdapter.ItemClickListener) {
+        itemView.setOnClickListener { itemClickListener.onLoadMoreClick() }
     }
 }
