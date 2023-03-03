@@ -8,6 +8,8 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.GridLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,15 +38,39 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.toolbar.apply{
+            title = "사진 가져오기"
+            setSupportActionBar(this)
+        }
+
         binding.loadImageButton.setOnClickListener {
             checkPermission()
-            Log.d(TAG, "clicked")
         }
 
         binding.navigateFrameActivityButton.setOnClickListener {
             navigate2FrameActivity()
         }
         initRecyclerView()
+    }
+
+    /**메뉴를 만들어야함*/
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    /**메뉴 클릭시 동작*/
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when(item.itemId){
+            R.id.action_add -> {
+                checkPermission()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     private fun navigate2FrameActivity() {
