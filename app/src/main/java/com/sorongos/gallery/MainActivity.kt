@@ -2,6 +2,7 @@ package com.sorongos.gallery
 
 import android.Manifest
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +40,21 @@ class MainActivity : AppCompatActivity() {
             checkPermission()
             Log.d(TAG, "clicked")
         }
+
+        binding.navigateFrameActivityButton.setOnClickListener {
+            navigate2FrameActivity()
+        }
         initRecyclerView()
+    }
+
+    private fun navigate2FrameActivity() {
+        //FrameActvitt로 넘길 리스트를 뽑아줌
+        val images =
+            imageAdapter.currentList.filterIsInstance<ImageItems.Image>().map { it.uri.toString() }.toTypedArray()
+        val intent = Intent(this, FrameActivity::class.java)
+                //string array를 넣음
+            .putExtra("images", images)
+        startActivity(intent)
     }
 
     /**리사이클러뷰 초기화*/
@@ -61,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         //it -> uri
         val images = uriList.map { ImageItems.Image(it) }
 
-        val updateImages = imageAdapter.currentList.toMutableList().apply{addAll(images)}
+        val updateImages = imageAdapter.currentList.toMutableList().apply { addAll(images) }
 
         //notifydatasetChanged랑 유사
         //리스트가 아예 갱신
