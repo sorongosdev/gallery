@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.sorongos.gallery.databinding.ItemImageBinding
+import com.sorongos.gallery.databinding.ItemLoadMoreBinding
 
 
 /**리사이클러뷰 어댑터가 아닌 리스트 어댑터를 사용
@@ -36,11 +38,19 @@ class ImageAdapter : ListAdapter<ImageItems, RecyclerView.ViewHolder>(
     /**두 가지 타입이 생겨 체킹 부분 필요, 뷰타입 지정*/
     override fun getItemViewType(position: Int): Int {
         //마지막 포지션이면 푸터를 넣어줘야함
-        return if(itemCount.dec() == position) ITEM_LOAD_MORE else ITEM_IMAGE
+        return if (itemCount.dec() == position) ITEM_LOAD_MORE else ITEM_IMAGE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        TODO("Not yet implemented")
+        
+        return when (viewType) {
+            ITEM_IMAGE -> {
+
+            }
+            else -> { //ITEM_LOAD_MORE
+
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -60,4 +70,17 @@ sealed class ImageItems {
 
     //바로 객체가 만들어짐
     object LoadMore : ImageItems()
+}
+
+class ImageViewHolder(private val binding: ItemImageBinding) :
+    RecyclerView.ViewHolder(binding.root) { //binding을 통해 받는다
+    fun bind(item: ImageItems.Image) {
+        //uri로 이미지를 로드
+        binding.previewImageView.setImageURI(item.uri)
+    }
+}
+class ItemMoreViewHolder(private val binding: ItemLoadMoreBinding) : RecyclerView.ViewHolder(binding.root){
+    fun bind(){
+
+    }
 }
