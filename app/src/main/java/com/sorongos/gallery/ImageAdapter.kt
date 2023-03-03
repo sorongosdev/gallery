@@ -1,6 +1,8 @@
 package com.sorongos.gallery
 
+import android.content.Context
 import android.net.Uri
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -42,13 +44,15 @@ class ImageAdapter : ListAdapter<ImageItems, RecyclerView.ViewHolder>(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        
+        var inflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         return when (viewType) {
             ITEM_IMAGE -> {
-
+                val binding = ItemImageBinding.inflate(inflater, parent, false)
+                ImageViewHolder(binding)
             }
             else -> { //ITEM_LOAD_MORE
-
+                val binding = ItemLoadMoreBinding.inflate(inflater, parent, false)
+                ItemMoreViewHolder(binding)
             }
         }
     }
