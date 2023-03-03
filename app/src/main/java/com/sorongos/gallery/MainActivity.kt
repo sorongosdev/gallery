@@ -7,15 +7,18 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.GridLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import com.sorongos.gallery.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var imageAdapter: ImageAdapter
 
     /**사진을 찍어서, 비디오를 찍어서 클립을 가져올 수 있음
      * startactivity : 다른 앱에서 열기
@@ -36,11 +39,33 @@ class MainActivity : AppCompatActivity() {
             checkPermission()
             Log.d(TAG, "clicked")
         }
+        initRecyclerView()
+    }
+
+    /**리사이클러뷰 초기화*/
+    private fun initRecyclerView() {
+        imageAdapter = ImageAdapter(object : ImageAdapter.ItemClickListener {
+            override fun onLoadMoreClick() {
+                checkPermission()
+            }
+        })
+        binding.imageRecyclerView.apply {
+            adapter = imageAdapter
+            layoutManager = GridLayoutManager(context, 2)
+        }
     }
 
     /**uri를 통해서 이미지를 보여줄 수 있다.*/
     private fun updateImages(uriList: List<Uri>) {
         Log.i("updateImages", "$uriList")
+        //it -> uri
+        val images = uriList.map { ImageItems.Image(it) }
+
+        val updateImages = imageAdapter.currentList.toMutableList().apply{addAll(images)}
+
+        //notifydatasetChanged랑 유사
+        //리스트가 아예 갱신
+        imageAdapter.submitList(updateImages)
     }
 
     /**권한을 물어보고, 버튼을 다시 눌러야하는 수고 없이 allow 누르면 바로 실행*/
@@ -51,11 +76,11 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        when(requestCode){
+        when (requestCode) {
             REQUEST_READ_EXTERNAL_STORAGE -> { // 코드가 일치하고, 권한 허용이 되었다면 바로 실행
                 // ?: 연산자 - null일 때 오른쪽에 있는 걸로 디폴트값을 정해줌
                 val resultCode = grantResults.firstOrNull() ?: PackageManager.PERMISSION_GRANTED
-                if(resultCode == PackageManager.PERMISSION_GRANTED){
+                if (resultCode == PackageManager.PERMISSION_GRANTED) {
                     loadImage()
                 }
             }
