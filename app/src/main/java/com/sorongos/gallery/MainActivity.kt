@@ -169,6 +169,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**모든 이미지 타입을 가져옴
+     * SAF : Storage Access Framework
+     * Intent가 아닌 saf로 이미지를 불러옴
      * saf 기능을 이용할 때 MIME 타입을 이용해 이미지 파일을 불러 오겠다*/
     private fun loadImage() {
         imageLoadLauncher.launch("image/*")
