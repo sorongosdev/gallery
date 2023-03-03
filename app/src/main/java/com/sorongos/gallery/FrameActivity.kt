@@ -3,6 +3,7 @@ package com.sorongos.gallery
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.tabs.TabLayoutMediator
 import com.sorongos.gallery.databinding.ActivityFrameBinding
 
 class FrameActivity : AppCompatActivity() {
@@ -21,5 +22,14 @@ class FrameActivity : AppCompatActivity() {
         val frameAdapter = FrameAdapter(images)
 
         binding.viewPager.adapter = frameAdapter
+
+        /**탭으로 몇번째 사진인지 확인 가능*/
+        TabLayoutMediator(
+            binding.tabLayout,
+            binding.viewPager,
+        ){
+            tab,position ->
+            binding.viewPager.currentItem = tab.position
+        }.attach()
     }
 }
