@@ -4,8 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!--    가로/세로 비-->
+    <!--    가로/세로 비
+    scaleType?
+    -->
     <ImageView
+        android:scaleType="center"
         android:background="@color/white"
         android:id="@+id/previewImageView"
         android:layout_width="match_parent"
